@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management System</title>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --danger: #ef4444;
+            --danger-hover: #dc2626;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            padding: 30px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .api-link-banner {
+            background-color: #e0e7ff;
+            color: #3730a3;
+            padding: 10px 16px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+            font-size: 0.9rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .api-link-banner a {
+            color: var(--primary);
+            font-weight: 600;
+            text-decoration: underline;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border);
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        h2 {
+            font-size: 1.25rem;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        input {
+            padding: 10px 14px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.15s ease;
+        }
+
+        input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+        }
+
+        button {
+            cursor: pointer;
+            padding: 10px 20px;
+            border-radius: 6px;
+            border: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: background 0.15s ease;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+            padding: 6px 12px;
+            font-size: 0.85rem;
+        }
+
+        .btn-danger:hover {
+            background: var(--danger-hover);
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #334155;
+            padding: 10px 16px;
+        }
+
+        .btn-secondary:hover {
+            background: #cbd5e1;
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .search-bar input {
+            flex: 1;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.9rem;
+        }
+
+        th {
+            background: #f1f5f9;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+        }
+
+        tr:hover td {
+            background: #f8fafc;
+        }
+
+        .badge {
+            background: #e0f2fe;
+            color: #0369a1;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-muted);
+        }
+
+        #alertBox {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            display: none;
+            font-size: 0.9rem;
+        }
+
+        .alert-success {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Student Management System</h1>
+            <p class="subtitle">Spring Boot REST API & MySQL Database</p>
+        </header>
+
+        <div class="api-link-banner">
+            <span>Direct JSON API: <a href="/students" target="_blank">http://localhost:8080/students</a></span>
+            <button class="btn-secondary" onclick="loadStudents()">Refresh</button>
+        </div>
+
+        <div id="alertBox"></div>
+
+        <!-- Add Student Form -->
+        <div class="card">
+            <h2>Add New Student</h2>
+            <form id="addStudentForm" onsubmit="addStudent(event)">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" id="name" placeholder="e.g. Amit Kumar" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="course">Course</label>
+                        <input type="text" id="course" placeholder="e.g. BCA" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" placeholder="e.g. amit@example.com" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary">Add Student</button>
+            </form>
+        </div>
+
+        <!-- Search Student by ID -->
+        <div class="card">
+            <h2>Search by ID</h2>
+            <div class="search-bar">
+                <input type="number" id="searchId" placeholder="Enter Student ID (e.g. 1)">
+                <button class="btn-primary" onclick="searchById()">Search</button>
+                <button class="btn-secondary" onclick="loadStudents()">Show All</button>
+            </div>
+        </div>
+
+        <!-- Students Table -->
+        <div class="card">
+            <h2>All Students</h2>
+            <table id="studentsTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Course</th>
+                        <th>Email</th>
+                        <th style="text-align: right;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="studentsBody">
+                    <tr>
+                        <td colspan="5" class="empty-state">Loading students...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        function showAlert(msg, isSuccess = true) {
+            const box = document.getElementById('alertBox');
+            box.textContent = msg;
+            box.className = isSuccess ? 'alert-success' : 'alert-error';
+            box.style.display = 'block';
+            setTimeout(() => { box.style.display = 'none'; }, 3000);
+        }
+
+        async function loadStudents() {
+            try {
+                const res = await fetch('/students');
+                if (!res.ok) throw new Error('Failed to load students');
+                const data = await res.json();
+                renderTable(data);
+            } catch (err) {
+                showAlert('Error loading students: ' + err.message, false);
+            }
+        }
+
+        async function searchById() {
+            const id = document.getElementById('searchId').value.trim();
+            if (!id) {
+                loadStudents();
+                return;
+            }
+            try {
+                const res = await fetch(`/students/${id}`);
+                if (res.status === 404) {
+                    renderTable([]);
+                    showAlert(`No student found with ID ${id}`, false);
+                    return;
+                }
+                const student = await res.json();
+                renderTable([student]);
+            } catch (err) {
+                showAlert('Error searching student: ' + err.message, false);
+            }
+        }
+
+        async function addStudent(event) {
+            event.preventDefault();
+            const name = document.getElementById('name').value;
+            const course = document.getElementById('course').value;
+            const email = document.getElementById('email').value;
+
+            try {
+                const res = await fetch('/students', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, course, email })
+                });
+                if (!res.ok) throw new Error('Failed to add student');
+                document.getElementById('addStudentForm').reset();
+                showAlert('Student added successfully!');
+                loadStudents();
+            } catch (err) {
+                showAlert('Error adding student: ' + err.message, false);
+            }
+        }
+
+        async function deleteStudent(id) {
+            if (!confirm(`Are you sure you want to delete student with ID ${id}?`)) return;
+            try {
+                const res = await fetch(`/students/${id}`, { method: 'DELETE' });
+                if (!res.ok) throw new Error('Failed to delete student');
+                showAlert(`Student ID ${id} deleted successfully!`);
+                loadStudents();
+            } catch (err) {
+                showAlert('Error deleting student: ' + err.message, false);
+            }
+        }
+
+        function renderTable(students) {
+            const tbody = document.getElementById('studentsBody');
+            if (!students || students.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="empty-state">No students found.</td></tr>';
+                return;
+            }
+            tbody.innerHTML = students.map(s => `
+                <tr>
+                    <td><strong>#${s.id}</strong></td>
+                    <td>${escapeHtml(s.name)}</td>
+                    <td><span class="badge">${escapeHtml(s.course)}</span></td>
+                    <td>${escapeHtml(s.email)}</td>
+                    <td style="text-align: right;">
+                        <button class="btn-danger" onclick="deleteStudent(${s.id})">Delete</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+            return String(text).replace(/[&<>"']/g, m => map[m]);
+        }
+
+        // Initial load
+        window.onload = loadStudents;
+    </script>
+</body>
+</html>
